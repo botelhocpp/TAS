@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/home/botelhocpp/Projetos/TAS/build",
+  "command": "/usr/bin/g++ -I/home/botelhocpp/Projetos/TAS -g -o app/CMakeFiles/tas.dir/src/main.cpp.o -c /home/botelhocpp/Projetos/TAS/app/src/main.cpp",
+  "file": "/home/botelhocpp/Projetos/TAS/app/src/main.cpp",
+  "output": "app/CMakeFiles/tas.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/botelhocpp/Projetos/TAS/build",
+  "command": "/usr/bin/g++ -I/home/botelhocpp/Projetos/TAS -g -o module/decoder/CMakeFiles/tas_module_decoder.dir/src/decoder.cpp.o -c /home/botelhocpp/Projetos/TAS/module/decoder/src/decoder.cpp",
+  "file": "/home/botelhocpp/Projetos/TAS/module/decoder/src/decoder.cpp",
+  "output": "module/decoder/CMakeFiles/tas_module_decoder.dir/src/decoder.cpp.o"
+},
+{
+  "directory": "/home/botelhocpp/Projetos/TAS/build",
+  "command": "/usr/bin/g++ -I/home/botelhocpp/Projetos/TAS -g -o module/instruction/CMakeFiles/tas_module_instruction.dir/src/instruction.cpp.o -c /home/botelhocpp/Projetos/TAS/module/instruction/src/instruction.cpp",
+  "file": "/home/botelhocpp/Projetos/TAS/module/instruction/src/instruction.cpp",
+  "output": "module/instruction/CMakeFiles/tas_module_instruction.dir/src/instruction.cpp.o"
+},
+{
+  "directory": "/home/botelhocpp/Projetos/TAS/build",
+  "command": "/usr/bin/g++ -I/home/botelhocpp/Projetos/TAS -g -o module/parser/CMakeFiles/tas_module_parser.dir/src/parser.cpp.o -c /home/botelhocpp/Projetos/TAS/module/parser/src/parser.cpp",
+  "file": "/home/botelhocpp/Projetos/TAS/module/parser/src/parser.cpp",
+  "output": "module/parser/CMakeFiles/tas_module_parser.dir/src/parser.cpp.o"
+},
+{
+  "directory": "/home/botelhocpp/Projetos/TAS/build",
+  "command": "/usr/bin/g++ -I/home/botelhocpp/Projetos/TAS -g -o module/parser/CMakeFiles/tas_module_parser.dir/src/parser_exception.cpp.o -c /home/botelhocpp/Projetos/TAS/module/parser/src/parser_exception.cpp",
+  "file": "/home/botelhocpp/Projetos/TAS/module/parser/src/parser_exception.cpp",
+  "output": "module/parser/CMakeFiles/tas_module_parser.dir/src/parser_exception.cpp.o"
+},
+{
+  "directory": "/home/botelhocpp/Projetos/TAS/build",
+  "command": "/usr/bin/gcc -I/home/botelhocpp/Projetos/TAS -g -o utils/getopt/CMakeFiles/tas_utils_getopt.dir/src/getopt.c.o -c /home/botelhocpp/Projetos/TAS/utils/getopt/src/getopt.c",
+  "file": "/home/botelhocpp/Projetos/TAS/utils/getopt/src/getopt.c",
+  "output": "utils/getopt/CMakeFiles/tas_utils_getopt.dir/src/getopt.c.o"
+},
+{
+  "directory": "/home/botelhocpp/Projetos/TAS/build",
+  "command": "/usr/bin/g++ -I/home/botelhocpp/Projetos/TAS -g -o utils/strmanip/CMakeFiles/tas_utils_strmanip.dir/src/strmanip.cpp.o -c /home/botelhocpp/Projetos/TAS/utils/strmanip/src/strmanip.cpp",
+  "file": "/home/botelhocpp/Projetos/TAS/utils/strmanip/src/strmanip.cpp",
+  "output": "utils/strmanip/CMakeFiles/tas_utils_strmanip.dir/src/strmanip.cpp.o"
+}
+]

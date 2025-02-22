@@ -14,10 +14,10 @@ constexpr char kCommentSymbol[] = "//";
 
 void tas::instruction::CleanInstruction(std::string& line) {
   strmanip::RemoveComma(line);
+  strmanip::RemoveSubstring(line, kCommentSymbol);
   strmanip::RightTrim(line);
   strmanip::LeftTrim(line);
   strmanip::MiddleTrim(line);
-  strmanip::RemoveSubstring(line, kCommentSymbol);
 }
 
 void tas::instruction::SplitInstruction(const std::string& line, std::vector<std::string>& instruction_elements) {

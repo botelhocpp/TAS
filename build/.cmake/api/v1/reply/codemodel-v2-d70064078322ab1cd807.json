@@ -1,0 +1,258 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						6
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "app",
+					"jsonFile" : "directory-app-Debug-94c5f210ca04b1028ae5.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "app",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "module",
+					"childIndexes" : 
+					[
+						3,
+						4,
+						5
+					],
+					"jsonFile" : "directory-module-Debug-e032f238cb058b90ca93.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "module"
+				},
+				{
+					"build" : "module/decoder",
+					"jsonFile" : "directory-module.decoder-Debug-7ef5ad77fc8a628c23e2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 0,
+					"source" : "module/decoder",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "module/instruction",
+					"jsonFile" : "directory-module.instruction-Debug-b6910618aa6aaae6131c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 0,
+					"source" : "module/instruction",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "module/parser",
+					"jsonFile" : "directory-module.parser-Debug-d3bfbee02cd8cee11713.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 0,
+					"source" : "module/parser",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "utils",
+					"childIndexes" : 
+					[
+						7,
+						8,
+						9
+					],
+					"jsonFile" : "directory-utils-Debug-ecc62ddb27eede1f7ffa.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "utils"
+				},
+				{
+					"build" : "utils/exprtk",
+					"jsonFile" : "directory-utils.exprtk-Debug-6701c015f74d2f847864.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 0,
+					"source" : "utils/exprtk",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "utils/getopt",
+					"jsonFile" : "directory-utils.getopt-Debug-58806cf9bf351100ea73.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 0,
+					"source" : "utils/getopt",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "utils/strmanip",
+					"jsonFile" : "directory-utils.strmanip-Debug-d65dc2c637d4c080af4e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28.3"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 0,
+					"source" : "utils/strmanip",
+					"targetIndexes" : 
+					[
+						6
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9
+					],
+					"name" : "Simple MIPS Assembler",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "tas::@5f5a17c01335469806cb",
+					"jsonFile" : "target-tas-Debug-3ca82a37d8defdcb9d6c.json",
+					"name" : "tas",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "tas_module_decoder::@f2476acb188ec6f02e11",
+					"jsonFile" : "target-tas_module_decoder-Debug-2d43c1dcb652993116cc.json",
+					"name" : "tas_module_decoder",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "tas_module_instruction::@f384697eb49055cbe168",
+					"jsonFile" : "target-tas_module_instruction-Debug-257fd1e41ffe7c32fb32.json",
+					"name" : "tas_module_instruction",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "tas_module_parser::@0a95a0363494f09b0de0",
+					"jsonFile" : "target-tas_module_parser-Debug-ac20c92e9d0190473964.json",
+					"name" : "tas_module_parser",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "tas_utils_exprtk::@e743942218ecc74561a4",
+					"jsonFile" : "target-tas_utils_exprtk-Debug-372676ddb519cf3eeb4b.json",
+					"name" : "tas_utils_exprtk",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "tas_utils_getopt::@869da3ccb7a1a8076a1f",
+					"jsonFile" : "target-tas_utils_getopt-Debug-a7e050039d8c91597a3a.json",
+					"name" : "tas_utils_getopt",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "tas_utils_strmanip::@5ebdce9f8c6bd76bbb36",
+					"jsonFile" : "target-tas_utils_strmanip-Debug-e3115dd61f9adc8861df.json",
+					"name" : "tas_utils_strmanip",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/botelhocpp/Projetos/TAS/build",
+		"source" : "/home/botelhocpp/Projetos/TAS"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

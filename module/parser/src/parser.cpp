@@ -13,28 +13,92 @@
 #include "module/instruction/include/instruction.hpp"
 #include "module/parser/include/parser_exception.hpp"
 
-const uint16_t kInstructionsInitialAddress = 0x0020;
+const uint16_t kInstructionsInitialAddress = 0x0000;
 
-std::vector<std::string> tas::parser::ReadFileToVector(std::ifstream &input_file) {
+std::vector<std::string> tas::parser::ReadFileToVector(std::ifstream &input_file, std::string const& file_name) {
   std::vector<std::string> file_contents;
   
+  uint32_t file_line_number = 1;
+
   std::string file_line;
   while (std::getline(input_file, file_line)) {
+    std::string file_line_str = file_name + ":" + std::to_string(file_line_number++);
+    file_line.insert(0, file_line_str + " ");
     file_contents.push_back(file_line);
   }
 
   return file_contents;
 }
 
-void tas::parser::PreParseFileLabels(std::vector<std::string>& file_contents, std::map<int, std::vector<std::string>> &instructions, std::map<uint16_t, std::string> &labels) {
+void tas::parser::PreProcessFile(std::vector<std::string>& file_contents) {
+  std::map<std::string, std::string> definitions;
+
+  for(int i = 0; i < file_contents.size(); i++) {
+    auto &file_content_line = file_contents.at(i);
+
+    tas::instruction::CleanInstruction(file_content_line);
+
+    const auto index = file_content_line.find(' ');
+    const auto file_and_line_number = file_content_line.substr(0, index);
+    const auto file_line = file_content_line.substr(index + 1);
+
+    if((file_content_line.size() == file_and_line_number.size())) {
+      file_content_line.clear();
+      continue;
+    }
+    else if(file_line.at(0) != '\%') {
+      continue;
+    }
+
+    std::vector<std::string> line_elements;
+
+    tas::instruction::SplitInstruction(file_line, line_elements);
+
+    file_content_line.clear();
+
+    if(line_elements.at(0) == "\%define") {
+      definitions[line_elements.at(1)] = line_elements.at(2);
+    }
+    else if(line_elements.at(0) == "\%include") {
+        std::ifstream include_file(line_elements.at(1));
+        if (!include_file.is_open()) {
+          throw ParserException("File '" + line_elements.at(1) + "' doesn't exist", file_and_line_number); 
+        }
+        auto include_file_contents = ReadFileToVector(include_file, line_elements.at(1));
+        
+        
+        file_contents.insert(file_contents.begin() + i, include_file_contents.begin(), include_file_contents.end());
+    } 
+  }
+
+  std::for_each(definitions.begin(), definitions.end(), [&](auto const& def){
+    std::for_each(file_contents.begin(), file_contents.end(), [&](auto& e) {
+      const auto it = e.find(def.first);
+
+      if(it != std::string::npos) {
+        e.replace(it, def.first.size(), def.second);
+      }
+    });
+  });
+
+  for(int i = 0; i < file_contents.size(); i++) {
+    if(file_contents.at(i).empty()) {
+      file_contents.erase(file_contents.begin() + i--);
+    }
+  }
+}
+
+void tas::parser::ParseFileLabels(std::vector<std::string>& file_contents, std::map<int, std::vector<std::string>> &instructions, std::map<uint16_t, std::string> &labels) {
   uint16_t address = kInstructionsInitialAddress;
 
   for (int line = 0; line < file_contents.size(); line++) {
+    std::string file_content_line = file_contents.at(line);
+
+    const auto index = file_content_line.find(' ');
+    const auto file_and_line_number = file_content_line.substr(0, index);
+    auto instruction = file_content_line.substr(index + 1);
+
     try {
-      std::string instruction = file_contents.at(line);
-
-      tas::instruction::CleanInstruction(instruction);
-
       if (instruction.empty()) {
         continue;
       } else if (instruction.back() == ':') {
@@ -59,7 +123,7 @@ void tas::parser::PreParseFileLabels(std::vector<std::string>& file_contents, st
 
       address += 2;
     } catch (std::exception &e) {
-      throw ParserException(e.what(), line + 1);
+      throw ParserException(e.what(), file_and_line_number);
     }
   }
 }
@@ -68,6 +132,10 @@ void tas::parser::ParseInstructions(std::ofstream &output_file, std::vector<std:
   std::vector<uint16_t> instructions_binaries;
   uint16_t current_line = 0;
   std::for_each(instructions.begin(), instructions.end(), [&](auto const &instruction) {
+    const auto index = file_contents.at(instruction.first - 1).find(' ');
+    const auto file_and_line_number = file_contents.at(instruction.first - 1).substr(0, index);
+    const auto file_line = file_contents.at(instruction.first - 1).substr(index + 1);
+    
     try {
       uint16_t instruction_binary = tas::decoder::DecodeInstruction(instruction.second, labels);
       instructions_binaries.push_back(instruction_binary);
@@ -75,10 +143,10 @@ void tas::parser::ParseInstructions(std::ofstream &output_file, std::vector<std:
       
       if(print_output) {
         const uint16_t address = std::stoi(instruction.second.front());
-        std::printf("%04d: %-30s : 0x%04X: 0x%04X\n", (address - kInstructionsInitialAddress), file_contents.at(instruction.first - 1).c_str(), address, instruction_binary);
+        std::printf("%04d: %-30s : 0x%04X: 0x%04X\n", (address - kInstructionsInitialAddress), file_line.c_str(), address, instruction_binary);
       }
     } catch (std::exception &e) {
-      throw ParserException(e.what(), instruction.first);
+      throw ParserException(e.what(), file_and_line_number);
     }
   });
 }

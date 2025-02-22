@@ -24,4 +24,5 @@ target_include_directories(${project_name} PUBLIC ${tas_dir})
 
 target_link_libraries(${project_name} LINK_PUBLIC
     tas_module_instruction
+    tas_utils_exprtk
 )

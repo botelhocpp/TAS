@@ -22,10 +22,10 @@ const uint16_t kRnPosition = 2;
 const std::unordered_map<std::string, uint16_t> kRegisterMap = {
     {"a0", 0},
     {"a1", 1},
-    {"a2", 2},
-    {"t0", 3},
-    {"t1", 4},
-    {"t2", 5},
+    {"t0", 2},
+    {"t1", 3},
+    {"s0", 4},
+    {"s1", 5},
     {"sp", 6},
     {"pc", 7}};
 
@@ -96,9 +96,7 @@ uint16_t tas::decoder::CalculateLabelAddress(const std::string& label, const std
     address = DecodeLabel(label, program_labels);
   }
   
-  if(!is_jump) {
-    address = address - std::stoi(current_address) - 4;
-  }
+  address = address - std::stoi(current_address) - 2;
 
   return address & mask;
 }

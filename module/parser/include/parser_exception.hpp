@@ -10,14 +10,14 @@ namespace parser {
 
 class ParserException : private std::exception {
  public:
-  ParserException(const std::string& message, int line) noexcept;
+  ParserException(const std::string& message, const std::string& file_and_line) noexcept;
   virtual ~ParserException() = default;
   virtual char const* what() const noexcept;
-  int GetLine() const noexcept;
+  std::string const& GetFileAndLine() const noexcept;
 
  private:
   std::string message;
-  int line;
+  std::string file_and_line;
 };
 
 }  // namespace parser

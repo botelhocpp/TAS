@@ -1,4 +1,8 @@
+// %define SP_VALUE 2
+
 main:
+// mov sp, #SP_VALUE
+
 jmp alu_ops
 jmp #2
 jmp #-2
@@ -29,6 +33,9 @@ alu_ops:
 mov t2, sp
 mov t2, #100
 
+movu t2, sp
+movu t2, #100
+
 add a0, a0, a1
 add a0, a0, #1
 add a0, a0, #-1
@@ -36,10 +43,6 @@ add a0, a0, #-1
 sub a0, a0, a1
 sub a0, a0, #1
 sub a0, a0, #-1
-
-mul a0, a0, a1
-mul a0, a0, #1
-mul a0, a0, #-1
 
 and a0, a0, a1
 and a0, a0, #1

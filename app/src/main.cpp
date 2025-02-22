@@ -34,8 +34,7 @@ int main(int argc, char *argv[]) {
     return kNoInputFileErrorCode;
   }
 
-  std::string input_file_name;
-  input_file_name = argv[1];
+  std::string input_file_name = argv[1];
 
   std::ifstream input_file(input_file_name);
   if (!input_file.is_open()) {
@@ -84,15 +83,17 @@ int main(int argc, char *argv[]) {
 
   std::ofstream output_file(output_file_name);
   try {
-    std::vector<std::string> file_contents = tas::parser::ReadFileToVector(input_file);
+    std::vector<std::string> file_contents = tas::parser::ReadFileToVector(input_file, input_file_name);
+
+    tas::parser::PreProcessFile(file_contents);
 
     std::map<int, std::vector<std::string>> instructions;
     std::map<uint16_t, std::string> labels;
-    tas::parser::PreParseFileLabels(file_contents, instructions, labels);
+    tas::parser::ParseFileLabels(file_contents, instructions, labels);
 
     tas::parser::ParseInstructions(output_file, file_contents, instructions, labels, print_output);
   } catch (tas::parser::ParserException &e) {
-    std::cerr << "\033[1;37m" << input_file_name << ":" << e.GetLine() << ":\033[0m \033[1;31merror\033[0m: " << e.what() << ".\nAborting.\n";
+    std::cerr << "\033[1;37m" << e.GetFileAndLine() << ":\033[0m \033[1;31merror\033[0m: " << e.what() << ".\nAborting.\n";
     std::remove(output_file_name.c_str());
     return kParsingErrorCode;
   }
