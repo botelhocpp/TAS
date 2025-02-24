@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
+#include <cstring>
+#include <regex>
 
 #include "module/decoder/include/decoder.hpp"
 #include "module/instruction/include/instruction.hpp"
@@ -73,11 +75,8 @@ void tas::parser::PreProcessFile(std::vector<std::string>& file_contents) {
 
   std::for_each(definitions.begin(), definitions.end(), [&](auto const& def){
     std::for_each(file_contents.begin(), file_contents.end(), [&](auto& e) {
-      const auto it = e.find(def.first);
-
-      if(it != std::string::npos) {
-        e.replace(it, def.first.size(), def.second);
-      }
+      const std::regex word_regex("\\b" + def.first + "\\b");
+      e = std::regex_replace(e, word_regex, def.second);
     });
   });
 
@@ -92,7 +91,7 @@ void tas::parser::ParseFileLabels(std::vector<std::string>& file_contents, std::
   uint16_t address = kInstructionsInitialAddress;
 
   for (int line = 0; line < file_contents.size(); line++) {
-    std::string file_content_line = file_contents.at(line);
+    auto& file_content_line = file_contents.at(line);
 
     const auto index = file_content_line.find(' ');
     const auto file_and_line_number = file_content_line.substr(0, index);
@@ -101,20 +100,39 @@ void tas::parser::ParseFileLabels(std::vector<std::string>& file_contents, std::
     try {
       if (instruction.empty()) {
         continue;
-      } else if (instruction.back() == ':') {
-        instruction.pop_back();
-        
-        auto it = std::find_if(labels.cbegin(), labels.cend(), [&](auto const &label) {
-          return label.second == instruction;
-        });
-
-        if(it != labels.cend()) {
-          throw std::invalid_argument("Duplicated label '" + it->second + "'");
-        }
-
-        labels[address] = instruction;
-        continue;
       }
+      else {
+        size_t pos = instruction.find(':');
+
+        if (pos != std::string::npos) {
+          std::string line_label = instruction.substr(0, pos);
+
+          size_t instruction_start = pos + 1;
+          while (instruction_start < instruction.size() && std::isspace(static_cast<unsigned char>(instruction[instruction_start]))) {
+              instruction_start++;
+          }
+
+          auto it = std::find_if(labels.cbegin(), labels.cend(), [&](auto const &label) {
+            return label.second == line_label;
+          });
+
+          if(it != labels.cend()) {
+            throw std::invalid_argument("Duplicated label '" + it->second + "'");
+          }
+          
+          labels[address] = line_label;
+
+          if(instruction_start >= instruction.size()) {
+            continue;
+          }
+          else {
+            size_t label_pos = file_content_line.find(line_label);
+            file_content_line.erase(label_pos, instruction_start);
+          }
+        }
+      }
+
+      instruction = file_content_line.substr(index + 1);
 
       std::vector<std::string> instruction_elements;
       instruction_elements.push_back(std::to_string(address));

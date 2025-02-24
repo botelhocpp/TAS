@@ -3,10 +3,13 @@
 
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
 
-project("Simple MIPS Assembler" C CXX)
+set(CMAKE_GENERATOR "MinGW Makefiles")
+
+project("TRISC Assembler" C CXX)
 
 set(tas_dir ${PROJECT_SOURCE_DIR})
 
 add_subdirectory(${tas_dir}/app)
 add_subdirectory(${tas_dir}/module)
 add_subdirectory(${tas_dir}/utils)
+    

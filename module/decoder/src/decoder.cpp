@@ -88,7 +88,7 @@ uint16_t tas::decoder::DecodeLabel(const std::string& label, const std::map<uint
 uint16_t tas::decoder::CalculateLabelAddress(const std::string& label, const std::string& current_address, const std::map<uint16_t, std::string>& program_labels, bool is_jump) {
   const uint16_t mask = (is_jump) ? k12bitMask : k10bitMask;
 
-  uint16_t address = 0;
+  int16_t address = 0;
 
   if (label == ".") {
     address = std::stoi(current_address, nullptr, 10);
@@ -119,7 +119,7 @@ uint16_t tas::decoder::DecodeInstruction(const std::vector<std::string>& instruc
     case instruction::InstructionType::kTypeBranch:{
       const bool is_jmp = instruction_ptr->type == instruction::InstructionType::kTypeJump;
 
-      uint16_t immediate = 0;
+      int16_t immediate = 0;
 
       if(instruction_elements.back().at(0) == '#') {
         immediate = DecodeImmediate(instruction_elements.back().substr(1), (is_jmp) ? k12bitMask : k10bitMask);
@@ -132,9 +132,12 @@ uint16_t tas::decoder::DecodeInstruction(const std::vector<std::string>& instruc
           is_jmp
         );
       }
+
+      const uint16_t sign_extend_shift = (instruction_ptr->type == instruction::InstructionType::kTypeJump) ? (16 - 12) : (16 - 10); 
+      immediate = ((int16_t) (immediate << (sign_extend_shift))) >> sign_extend_shift;
       
-      const int max_branch_value = (is_jmp) ? k12bitMask : k10bitMask;
-      const int min_branch_value = -max_branch_value - 1;
+      const int16_t max_branch_value = ((is_jmp) ? k12bitMask : k10bitMask) >> 1;
+      const int16_t min_branch_value = -max_branch_value - 1;
 
       if(immediate > max_branch_value || immediate < min_branch_value) {
         throw std::invalid_argument("Invalid displacement. Expected a displacement between " +
@@ -142,13 +145,22 @@ uint16_t tas::decoder::DecodeInstruction(const std::vector<std::string>& instruc
                                     std::to_string(min_branch_value) + " bytes");
       }
 
-      instruction_binary |= (immediate >> 1);
+      if(instruction_ptr->type == instruction::InstructionType::kTypeBranch) {
+        immediate <<= 1;
+        immediate &= 0x07FC;
+      }
+      else {
+        immediate >>= 1;
+        immediate &= 0x07FF;
+      }
+
+      instruction_binary |= immediate;
       break;
     }
     
     case instruction::InstructionType::kTypeLoad:
     case instruction::InstructionType::kTypeStore:{
-        uint16_t immediate = DecodeImmediate(instruction_elements.back(), k5bitMask);
+        uint16_t immediate = DecodeImmediate(instruction_elements.back(), k5bitMask) >> 1;
 
         instruction_binary |= DecodeRegister(instruction_elements.at(3)) << kRmPosition;
 
@@ -160,7 +172,7 @@ uint16_t tas::decoder::DecodeInstruction(const std::vector<std::string>& instruc
           instruction_binary |= DecodeRegister(instruction_elements.at(2)) << kRdPosition;
         }
 
-        instruction_binary |= (immediate >> 1);
+        instruction_binary |= immediate;
       break;
     }
 
