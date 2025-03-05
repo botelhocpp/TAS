@@ -204,20 +204,21 @@ uint16_t tas::decoder::DecodeInstruction(const std::vector<std::string>& instruc
         instruction_binary |= (1 << 11) | (immediate);
       }
       else {
-        instruction_binary |= DecodeRegister(instruction_elements.back()) << kRnPosition;
+        const uint32_t source_operand_shift = (instruction_ptr->mnemonic == "not" || instruction_ptr->mnemonic == "neg") ? kRmPosition : kRnPosition;
+        instruction_binary |= DecodeRegister(instruction_elements.back()) << source_operand_shift;
       }
       break;
     }
-    
+
     case instruction::InstructionType::kTypeStack:
-      if(instruction_elements.at(2) == "push") {
+      if(instruction_ptr->mnemonic == "push") {
         instruction_binary |= DecodeRegister(instruction_elements.back()) << kRnPosition;
-      } else {
+      } else if(instruction_ptr->mnemonic == "pop") {
         instruction_binary |= DecodeRegister(instruction_elements.back()) << kRdPosition;
       }
       break;
     
-    default: // instruction::InstructionType::kTypeHalt
+    default: // instruction::InstructionType::kTypeControl and instruction::InstructionType::kTypeHalt
       break;
   }
 

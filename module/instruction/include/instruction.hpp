@@ -16,6 +16,7 @@ enum class InstructionType {
     kTypeLoad,
     kTypeStore,
     kTypeAlu,
+    kTypeControl,
     kTypeStack,
     kTypeHalt
 };

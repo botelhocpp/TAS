@@ -50,12 +50,16 @@ int main(int argc, char *argv[]) {
   bool informed_output_file = false;
   std::string output_file_name;
   bool print_output = false;
+  bool print_vhdl = false;
 
   int option;
-  while ((option = getopt(argc - 1, argv + 1, "po:")) != -1) {
+  while ((option = getopt(argc - 1, argv + 1, "vpo:")) != -1) {
     switch (option) {
       case 'p':
         print_output = true;
+        break;
+      case 'v':
+        print_vhdl = true;
         break;
       case 'o':
         informed_output_file = true;
@@ -81,7 +85,7 @@ int main(int argc, char *argv[]) {
     output_file_name.erase(output_file_name.find(".asm"));
   }
 
-  std::ofstream output_file(output_file_name);
+  std::ofstream output_file(output_file_name, std::ios::out | std::ios::binary);
   try {
     std::vector<std::string> file_contents = tas::parser::ReadFileToVector(input_file, input_file_name);
 
@@ -91,7 +95,7 @@ int main(int argc, char *argv[]) {
     std::map<uint16_t, std::string> labels;
     tas::parser::ParseFileLabels(file_contents, instructions, labels);
 
-    tas::parser::ParseInstructions(output_file, file_contents, instructions, labels, print_output);
+    tas::parser::ParseInstructions(output_file, file_contents, instructions, labels, print_output, print_vhdl);
   } catch (tas::parser::ParserException &e) {
     std::cerr << "\033[1;37m" << e.GetFileAndLine() << ":\033[0m \033[1;31merror\033[0m: " << e.what() << ".\nAborting.\n";
     std::remove(output_file_name.c_str());

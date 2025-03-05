@@ -1,35 +1,43 @@
 // Copyright (c) 2025 TAS
 // All rights reserved
 
-main:
-    mov s0, #0
-    mov s1, #0x00
-    movu s1, #0x10
+%include defs.inc
 
-main_fill_memory:
+_start:         mov s0, #0
+                mov s1, #0xFF
+                movu s1, #0xFF
 
-    // Read serial
-    add t0, pc, #4
-    push t0
-    jmp uart_read
+_get_uart_addr: xor t0, t0, t0
+                movu t0, #UART_ADDR     
 
-    // Write to RAM
-    str a0, [s0, #0]
-    add s0, s0, #2
-    cmp s0, s1
-    blt main_fill_memory
-    
-    // Jump to start of memory
-    mov pc, #0x0000
+_uart_read_lsb: ldr t1, [t0, #UART_CONTROL]
+                and t1, t1, #UART_CONTROL_RXDONE
+                beq _uart_read_lsb
+                ldr a0, [t0, #UART_RXDATA]
+                mov t1, #0
+                str t1, [t0, #UART_CONTROL]
 
-uart_read:
-    xor t0, t0, t0
-    movu t0, #0xF4
+_uart_read_msb: ldr t1, [t0, #UART_CONTROL]
+                and t1, t1, #UART_CONTROL_RXDONE
+                beq _uart_read_msb
+                ldr a1, [t0, #UART_RXDATA]
+                mov t1, #0
+                str t1, [t0, #UART_CONTROL]
 
-uart_read_wait_rxdone:
-    ldr t1, [t0, #4]
-    and t1, t1, #0x4
-    beq uart_read_wait_rxdone
+_assemble_inst: shl a1, a1, #8
+                or a0, a0, a1
+                cmp a0, s1
+                beq _cleanup
 
-    ldr a0, [t0, #2]
-    pop pc
+_write_ram:     str a0, [s0, #0]
+                add s0, s0, #2
+                jmp _uart_read_lsb
+
+_cleanup:       mov a0, #0
+                mov a1, #0
+                mov t0, #0
+                mov t1, #0
+                mov s0, #0
+                mov s1, #0
+
+_goto_program:  mov pc, #0x0000

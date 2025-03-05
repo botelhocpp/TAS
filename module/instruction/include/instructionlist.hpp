@@ -28,8 +28,11 @@ const instruction::Instruction kInstructionList[] = {
     {"cmp",  0xD000, 2, instruction::InstructionType::kTypeAlu},
     {"not",  0xE000, 2, instruction::InstructionType::kTypeAlu},
     {"neg",  0xE001, 2, instruction::InstructionType::kTypeAlu},
+    {"crie", 0xE002, 0, instruction::InstructionType::kTypeControl},
+    {"crid", 0xE003, 0, instruction::InstructionType::kTypeControl},
     {"push", 0xF8C0, 1, instruction::InstructionType::kTypeStack},
     {"pop",  0xF8C1, 1, instruction::InstructionType::kTypeStack},
+    {"iret", 0xFFC2, 0, instruction::InstructionType::kTypeStack},
     {"halt", 0xFFFF, 0, instruction::InstructionType::kTypeHalt},
 };
 

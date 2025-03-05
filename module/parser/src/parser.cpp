@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <regex>
+#include <array>
 
 #include "module/decoder/include/decoder.hpp"
 #include "module/instruction/include/instruction.hpp"
@@ -19,7 +20,7 @@ const uint16_t kInstructionsInitialAddress = 0x0000;
 
 std::vector<std::string> tas::parser::ReadFileToVector(std::ifstream &input_file, std::string const& file_name) {
   std::vector<std::string> file_contents;
-  
+
   uint32_t file_line_number = 1;
 
   std::string file_line;
@@ -64,13 +65,13 @@ void tas::parser::PreProcessFile(std::vector<std::string>& file_contents) {
     else if(line_elements.at(0) == "\%include") {
         std::ifstream include_file(line_elements.at(1));
         if (!include_file.is_open()) {
-          throw ParserException("File '" + line_elements.at(1) + "' doesn't exist", file_and_line_number); 
+          throw ParserException("File '" + line_elements.at(1) + "' doesn't exist", file_and_line_number);
         }
         auto include_file_contents = ReadFileToVector(include_file, line_elements.at(1));
-        
-        
-        file_contents.insert(file_contents.begin() + i, include_file_contents.begin(), include_file_contents.end());
-    } 
+
+
+        file_contents.insert(file_contents.begin() + i + 1, include_file_contents.begin(), include_file_contents.end());
+    }
   }
 
   std::for_each(definitions.begin(), definitions.end(), [&](auto const& def){
@@ -119,7 +120,7 @@ void tas::parser::ParseFileLabels(std::vector<std::string>& file_contents, std::
           if(it != labels.cend()) {
             throw std::invalid_argument("Duplicated label '" + it->second + "'");
           }
-          
+
           labels[address] = line_label;
 
           if(instruction_start >= instruction.size()) {
@@ -137,6 +138,18 @@ void tas::parser::ParseFileLabels(std::vector<std::string>& file_contents, std::
       std::vector<std::string> instruction_elements;
       instruction_elements.push_back(std::to_string(address));
       tas::instruction::SplitInstruction(instruction, instruction_elements);
+
+      // if(instruction_elements.at(1) == "li") {
+      //   uint16_t immediate = std::atoi(instruction_elements.back().substr(1).c_str());
+
+      //   instruction_elements.at(1) = "mov";
+
+      //   if(immediate > 0xFF) {
+      //     uint16_t imm = immediate >> 8;
+      //     std::vector<std::string> instruction_elements;
+      //   }
+      // }
+
       instructions[line + 1] = instruction_elements;
 
       address += 2;
@@ -146,25 +159,37 @@ void tas::parser::ParseFileLabels(std::vector<std::string>& file_contents, std::
   }
 }
 
-void tas::parser::ParseInstructions(std::ofstream &output_file, std::vector<std::string>& file_contents, std::map<int, std::vector<std::string>> &instructions, std::map<uint16_t, std::string> &labels, bool print_output) {
+void tas::parser::ParseInstructions(std::ofstream &output_file, std::vector<std::string>& file_contents, std::map<int, std::vector<std::string>> &instructions, std::map<uint16_t, std::string> &labels, bool print_output, bool print_vhdl) {
   std::vector<uint16_t> instructions_binaries;
   uint16_t current_line = 0;
+
+  std::string output;
+  std::array<char, 256> buffer;
   std::for_each(instructions.begin(), instructions.end(), [&](auto const &instruction) {
     const auto index = file_contents.at(instruction.first - 1).find(' ');
     const auto file_and_line_number = file_contents.at(instruction.first - 1).substr(0, index);
     const auto file_line = file_contents.at(instruction.first - 1).substr(index + 1);
-    
+
     try {
       uint16_t instruction_binary = tas::decoder::DecodeInstruction(instruction.second, labels);
       instructions_binaries.push_back(instruction_binary);
-      output_file << std::setfill('0') << std::setw(4) << std::hex << instruction_binary << "\n";
-      
+      output_file.write(reinterpret_cast<const char *>(&instruction_binary), sizeof(instruction_binary));
+
       if(print_output) {
         const uint16_t address = std::stoi(instruction.second.front());
-        std::printf("%04d: %-30s : 0x%04X: 0x%04X\n", (address - kInstructionsInitialAddress), file_line.c_str(), address, instruction_binary);
+        std::snprintf(buffer.begin(), 256, "%04d: %-30s : 0x%04X: 0x%04X\n", (address - kInstructionsInitialAddress), file_line.c_str(), address, instruction_binary);
+        output += buffer.begin();
+      }
+      else if(print_vhdl) {
+        std::snprintf(buffer.begin(), 256, "x\"%04x\", -- %s\n", instruction_binary, file_line.c_str());
+        output += buffer.begin();
       }
     } catch (std::exception &e) {
       throw ParserException(e.what(), file_and_line_number);
     }
   });
+
+  if(print_output || print_vhdl) {
+    std::cout << output;
+  }
 }

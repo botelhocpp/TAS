@@ -18,7 +18,7 @@ void PreProcessFile(std::vector<std::string>& file_contents);
 
 void ParseFileLabels(std::vector<std::string>& file_contents, std::map<int, std::vector<std::string>>& instructions, std::map<uint16_t, std::string>& labels);
 
-void ParseInstructions(std::ofstream& output_file, std::vector<std::string>& file_contents, std::map<int, std::vector<std::string>>& instructions, std::map<uint16_t, std::string>& labels, bool print_output = true);
+void ParseInstructions(std::ofstream& output_file, std::vector<std::string>& file_contents, std::map<int, std::vector<std::string>>& instructions, std::map<uint16_t, std::string>& labels, bool print_output = true, bool print_vhdl = false);
 
 }  // namespace parser
 }  // namespace tas
